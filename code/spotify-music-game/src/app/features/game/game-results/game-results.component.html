@@ -1,0 +1,80 @@
+<div class="results-container">
+  <div class="results-card">
+    <div class="header">
+      <h1 class="title">🎵 Game Complete!</h1>
+    </div>
+
+    <!-- Score summary -->
+    <div class="score-section">
+      <div class="score-display" [class]="getPerformanceClass(scorePercentage)">
+        <div class="score-value">{{ score }} / {{ maxScore }}</div>
+        <div class="score-percentage">{{ scorePercentage }}%</div>
+      </div>
+      <div class="performance-message">
+        {{ getPerformanceMessage(scorePercentage) }}
+      </div>
+    </div>
+
+    <!-- Statistics -->
+    <div class="stats-section">
+      <h2 class="section-title">Statistics</h2>
+      <div class="stats-grid">
+        <div class="stat-item">
+          <div class="stat-value">{{ totalRounds$ | async }}</div>
+          <div class="stat-label">Songs Played</div>
+        </div>
+        <div class="stat-item">
+          <div class="stat-value">{{ score$ | async }}</div>
+          <div class="stat-label">Correct Answers</div>
+        </div>
+        <div class="stat-item">
+          <div class="stat-value">{{ maxScore - score }}</div>
+          <div class="stat-label">Missed</div>
+        </div>
+        <div class="stat-item">
+          <div class="stat-value">{{ scorePercentage }}%</div>
+          <div class="stat-label">Accuracy</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Round by round results -->
+    <div class="rounds-section">
+      <h2 class="section-title">Round by Round</h2>
+      <div class="rounds-list">
+        <div
+          *ngFor="let result of roundResults$ | async"
+          class="round-item">
+          <div class="round-header">
+            <span class="round-number">Round {{ result.round }}</span>
+            <span class="round-score">{{ result.pointsEarned }}/2 points</span>
+          </div>
+          <div class="round-details">
+            <div class="track-info">
+              <div class="track-title">{{ result.track.title }}</div>
+              <div class="track-artist">{{ result.track.artist }}</div>
+            </div>
+            <div class="answer-results">
+              <div class="answer-result" [class.correct]="result.correctTitle" [class.incorrect]="!result.correctTitle">
+                <span class="result-icon">{{ result.correctTitle ? '✓' : '✗' }}</span>
+                <span class="result-label">Title</span>
+              </div>
+              <div class="answer-result" [class.correct]="result.correctArtist" [class.incorrect]="!result.correctArtist">
+                <span class="result-icon">{{ result.correctArtist ? '✓' : '✗' }}</span>
+                <span class="result-label">Artist</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Actions -->
+    <div class="actions">
+      <button class="play-again-button" (click)="playAgain()" type="button">
+        🎮 Play Again
+      </button>
+    </div>
+  </div>
+</div>
+

@@ -1,0 +1,43 @@
+<div class="login-container">
+  <div class="login-card">
+    <div class="logo-section">
+      <h1 class="app-title">🎵 Spotify Music Guessing Game</h1>
+      <p class="app-subtitle">Test your music knowledge with your own library!</p>
+    </div>
+
+    <div class="content-section">
+      <div class="features">
+        <div class="feature-item">
+          <span class="feature-icon">🎧</span>
+          <span class="feature-text">Play songs from your liked tracks</span>
+        </div>
+        <div class="feature-item">
+          <span class="feature-icon">🎯</span>
+          <span class="feature-text">Guess the title and artist</span>
+        </div>
+        <div class="feature-item">
+          <span class="feature-icon">🏆</span>
+          <span class="feature-text">Challenge yourself with easy or hard mode</span>
+        </div>
+      </div>
+
+      <button
+        class="login-button"
+        (click)="onLogin()"
+        [disabled]="(isLoading$ | async) || false"
+        type="button">
+        <span *ngIf="!(isLoading$ | async)">Login with Spotify</span>
+        <span *ngIf="isLoading$ | async">Loading...</span>
+      </button>
+
+      <p class="disclaimer">
+        You'll need a Spotify Premium account to play audio.
+      </p>
+
+      <div *ngIf="error$ | async as error" class="error-message">
+        {{ error }}
+      </div>
+    </div>
+  </div>
+</div>
+

@@ -1,0 +1,78 @@
+<div class="setup-container">
+  <div class="setup-card">
+    <div class="header">
+      <h1 class="title">🎵 Music Guessing Game</h1>
+      <div class="user-info" *ngIf="currentUser$ | async as user">
+        <span class="user-name">{{ user.display_name }}</span>
+        <button class="logout-button" (click)="logout()" type="button">Logout</button>
+      </div>
+    </div>
+
+    <div class="content">
+      <div class="section">
+        <h2 class="section-title">Select Difficulty</h2>
+        <div class="mode-selection">
+          <button
+            class="mode-button"
+            [class.selected]="selectedMode === 'easy'"
+            (click)="selectMode('easy')"
+            type="button">
+            <div class="mode-icon">😊</div>
+            <div class="mode-name">Easy Mode</div>
+            <div class="mode-description">Multiple choice questions</div>
+          </button>
+
+          <button
+            class="mode-button"
+            [class.selected]="selectedMode === 'hard'"
+            (click)="selectMode('hard')"
+            type="button">
+            <div class="mode-icon">🔥</div>
+            <div class="mode-name">Hard Mode</div>
+            <div class="mode-description">Type the answers</div>
+          </button>
+        </div>
+      </div>
+
+      <div class="section">
+        <h2 class="section-title">Game Info</h2>
+        <div class="info-grid">
+          <div class="info-item">
+            <div class="info-label">Songs per game</div>
+            <div class="info-value">{{ songsPerGame }}</div>
+          </div>
+          <div class="info-item">
+            <div class="info-label">Preview duration</div>
+            <div class="info-value">20 seconds</div>
+          </div>
+          <div class="info-item">
+            <div class="info-label">Points per song</div>
+            <div class="info-value">2 (title + artist)</div>
+          </div>
+          <div class="info-item">
+            <div class="info-label">Music source</div>
+            <div class="info-value">Your Liked Songs</div>
+          </div>
+        </div>
+      </div>
+
+      <div *ngIf="error$ | async as error" class="error-message">
+        {{ error }}
+      </div>
+
+      <button
+        class="start-button"
+        (click)="startGame()"
+        [disabled]="(isLoading$ | async) || false"
+        type="button">
+        <span *ngIf="!(isLoading$ | async)">Start Game</span>
+        <span *ngIf="isLoading$ | async">Loading tracks...</span>
+      </button>
+
+      <div class="tip">
+        <strong>💡 Tip:</strong> Make sure your Spotify app is not playing music before starting!
+      </div>
+    </div>
+  </div>
+</div>
+

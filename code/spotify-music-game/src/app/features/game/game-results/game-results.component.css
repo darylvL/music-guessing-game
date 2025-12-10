@@ -1,0 +1,285 @@
+.results-container {
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 1rem;
+  background: linear-gradient(135deg, #1db954 0%, #191414 100%);
+}
+
+.results-card {
+  background: white;
+  border-radius: 1rem;
+  padding: 2rem;
+  max-width: 700px;
+  width: 100%;
+  box-shadow: 0 10px 40px rgba(0, 0, 0, 0.3);
+  max-height: 90vh;
+  overflow-y: auto;
+}
+
+.header {
+  text-align: center;
+  margin-bottom: 2rem;
+}
+
+.title {
+  font-size: 2rem;
+  font-weight: bold;
+  color: #191414;
+  margin: 0;
+}
+
+.score-section {
+  text-align: center;
+  margin-bottom: 2rem;
+  padding: 2rem;
+  background: #f5f5f5;
+  border-radius: 1rem;
+}
+
+.score-display {
+  margin-bottom: 1rem;
+}
+
+.score-display.excellent {
+  color: #28a745;
+}
+
+.score-display.good {
+  color: #ffc107;
+}
+
+.score-display.needs-improvement {
+  color: #dc3545;
+}
+
+.score-value {
+  font-size: 3rem;
+  font-weight: bold;
+  line-height: 1;
+}
+
+.score-percentage {
+  font-size: 1.5rem;
+  font-weight: 600;
+  margin-top: 0.5rem;
+}
+
+.performance-message {
+  font-size: 1.5rem;
+  font-weight: 600;
+  color: #191414;
+}
+
+.stats-section {
+  margin-bottom: 2rem;
+}
+
+.section-title {
+  font-size: 1.25rem;
+  font-weight: 600;
+  color: #191414;
+  margin: 0 0 1rem 0;
+}
+
+.stats-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+  gap: 1rem;
+}
+
+.stat-item {
+  padding: 1rem;
+  background: #f5f5f5;
+  border-radius: 0.75rem;
+  text-align: center;
+}
+
+.stat-value {
+  font-size: 1.75rem;
+  font-weight: bold;
+  color: #1db954;
+  margin-bottom: 0.25rem;
+}
+
+.stat-label {
+  font-size: 0.85rem;
+  color: #666;
+}
+
+.rounds-section {
+  margin-bottom: 2rem;
+}
+
+.rounds-list {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+  max-height: 400px;
+  overflow-y: auto;
+  padding-right: 0.5rem;
+}
+
+.round-item {
+  padding: 1rem;
+  background: #f5f5f5;
+  border-radius: 0.75rem;
+  border-left: 4px solid #1db954;
+}
+
+.round-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 0.75rem;
+}
+
+.round-number {
+  font-weight: 600;
+  color: #191414;
+}
+
+.round-score {
+  font-weight: 600;
+  color: #1db954;
+}
+
+.round-details {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 1rem;
+}
+
+.track-info {
+  flex: 1;
+  min-width: 0;
+}
+
+.track-title {
+  font-weight: 600;
+  color: #191414;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.track-artist {
+  font-size: 0.9rem;
+  color: #666;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.answer-results {
+  display: flex;
+  gap: 0.5rem;
+}
+
+.answer-result {
+  display: flex;
+  align-items: center;
+  gap: 0.25rem;
+  padding: 0.25rem 0.5rem;
+  border-radius: 0.5rem;
+  font-size: 0.85rem;
+}
+
+.answer-result.correct {
+  background: #d4edda;
+  color: #155724;
+}
+
+.answer-result.incorrect {
+  background: #f8d7da;
+  color: #721c24;
+}
+
+.result-icon {
+  font-weight: bold;
+}
+
+.actions {
+  display: flex;
+  justify-content: center;
+}
+
+.play-again-button {
+  padding: 1rem 2rem;
+  font-size: 1.1rem;
+  font-weight: bold;
+  color: white;
+  background-color: #1db954;
+  border: none;
+  border-radius: 2rem;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  min-height: 56px;
+  min-width: 200px;
+  touch-action: manipulation;
+}
+
+.play-again-button:hover {
+  background-color: #1ed760;
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(29, 185, 84, 0.4);
+}
+
+.play-again-button:active {
+  transform: translateY(0);
+}
+
+/* Scrollbar styling */
+.rounds-list::-webkit-scrollbar {
+  width: 8px;
+}
+
+.rounds-list::-webkit-scrollbar-track {
+  background: #f5f5f5;
+  border-radius: 4px;
+}
+
+.rounds-list::-webkit-scrollbar-thumb {
+  background: #1db954;
+  border-radius: 4px;
+}
+
+/* Mobile optimizations */
+@media (max-width: 640px) {
+  .results-card {
+    padding: 1.5rem;
+  }
+
+  .title {
+    font-size: 1.5rem;
+  }
+
+  .score-value {
+    font-size: 2.5rem;
+  }
+
+  .score-percentage {
+    font-size: 1.25rem;
+  }
+
+  .performance-message {
+    font-size: 1.25rem;
+  }
+
+  .stats-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+
+  .round-details {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .play-again-button {
+    width: 100%;
+    min-width: auto;
+  }
+}
+

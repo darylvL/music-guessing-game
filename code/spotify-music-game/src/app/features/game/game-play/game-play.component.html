@@ -1,0 +1,133 @@
+<div class="play-container">
+  <div class="play-card">
+    <!-- Header with progress -->
+    <div class="header">
+      <div class="progress-info">
+        <span class="round-text">Round {{ currentRound$ | async }} / {{ totalRounds$ | async }}</span>
+        <span class="score-text">Score: {{ score$ | async }}</span>
+      </div>
+    </div>
+
+    <!-- Album art and playback info -->
+    <div class="song-section" *ngIf="currentSong$ | async as song">
+      <div class="album-art" *ngIf="song.albumImageUrl">
+        <img [src]="song.albumImageUrl" [alt]="song.title" />
+      </div>
+      <div class="album-art placeholder" *ngIf="!song.albumImageUrl">
+        🎵
+      </div>
+      <div class="playback-info">
+        <div class="listening-text">🎧 Listen carefully...</div>
+      </div>
+    </div>
+
+    <!-- Loading state -->
+    <div class="loading-section" *ngIf="isLoading$ | async">
+      <div class="spinner"></div>
+      <p>Loading next song...</p>
+    </div>
+
+    <!-- Easy Mode: Multiple Choice -->
+    <div class="answers-section" *ngIf="gameMode === 'easy' && !(isLoading$ | async)">
+      <div class="question-group">
+        <h3 class="question-title">What's the song title?</h3>
+        <div class="choices">
+          <button
+            *ngFor="let choice of titleChoices$ | async"
+            class="choice-button"
+            [class.selected]="selectedTitle === choice"
+            [class.correct]="(isAnswered$ | async) && (correctTitle$ | async) && selectedTitle === choice"
+            [class.incorrect]="(isAnswered$ | async) && !(correctTitle$ | async) && selectedTitle === choice"
+            [class.show-correct]="(isAnswered$ | async) && (currentSong$ | async)?.title === choice"
+            [disabled]="(isAnswered$ | async) || false"
+            (click)="selectTitle(choice)"
+            type="button">
+            {{ choice }}
+          </button>
+        </div>
+      </div>
+
+      <div class="question-group">
+        <h3 class="question-title">Who's the artist?</h3>
+        <div class="choices">
+          <button
+            *ngFor="let choice of artistChoices$ | async"
+            class="choice-button"
+            [class.selected]="selectedArtist === choice"
+            [class.correct]="(isAnswered$ | async) && (correctArtist$ | async) && selectedArtist === choice"
+            [class.incorrect]="(isAnswered$ | async) && !(correctArtist$ | async) && selectedArtist === choice"
+            [class.show-correct]="(isAnswered$ | async) && (currentSong$ | async)?.artist === choice"
+            [disabled]="(isAnswered$ | async) || false"
+            (click)="selectArtist(choice)"
+            type="button">
+            {{ choice }}
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Hard Mode: Text Input -->
+    <div class="answers-section" *ngIf="gameMode === 'hard' && !(isLoading$ | async)">
+      <div class="question-group">
+        <h3 class="question-title">What's the song title?</h3>
+        <input
+          type="text"
+          class="text-input"
+          [(ngModel)]="inputTitle"
+          [disabled]="(isAnswered$ | async) || false"
+          placeholder="Type the song title..."
+          [class.correct]="(isAnswered$ | async) && (correctTitle$ | async)"
+          [class.incorrect]="(isAnswered$ | async) && !(correctTitle$ | async)" />
+        <div class="correct-answer" *ngIf="(isAnswered$ | async) && !(correctTitle$ | async)">
+          Correct: {{ (currentSong$ | async)?.title }}
+        </div>
+      </div>
+
+      <div class="question-group">
+        <h3 class="question-title">Who's the artist?</h3>
+        <input
+          type="text"
+          class="text-input"
+          [(ngModel)]="inputArtist"
+          [disabled]="(isAnswered$ | async) || false"
+          placeholder="Type the artist name..."
+          [class.correct]="(isAnswered$ | async) && (correctArtist$ | async)"
+          [class.incorrect]="(isAnswered$ | async) && !(correctArtist$ | async)" />
+        <div class="correct-answer" *ngIf="(isAnswered$ | async) && !(correctArtist$ | async)">
+          Correct: {{ (currentSong$ | async)?.artist }}
+        </div>
+      </div>
+    </div>
+
+    <!-- Action buttons -->
+    <div class="actions" *ngIf="!(isLoading$ | async)">
+      <button
+        *ngIf="!(isAnswered$ | async)"
+        class="submit-button"
+        [disabled]="!canSubmit()"
+        (click)="submitAnswer()"
+        type="button">
+        Submit Answer
+      </button>
+
+      <button
+        *ngIf="isAnswered$ | async"
+        class="next-button"
+        (click)="nextRound()"
+        type="button">
+        Next Round →
+      </button>
+    </div>
+
+    <!-- Feedback -->
+    <div class="feedback" *ngIf="isAnswered$ | async">
+      <div class="feedback-item" [class.correct]="correctTitle$ | async" [class.incorrect]="!(correctTitle$ | async)">
+        {{ (correctTitle$ | async) ? '✓' : '✗' }} Title
+      </div>
+      <div class="feedback-item" [class.correct]="correctArtist$ | async" [class.incorrect]="!(correctArtist$ | async)">
+        {{ (correctArtist$ | async) ? '✓' : '✗' }} Artist
+      </div>
+    </div>
+  </div>
+</div>
+
