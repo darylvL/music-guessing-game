@@ -1,7 +1,7 @@
 export const environment = {
   production: true,
-  spotifyClientId: 'YOUR_SPOTIFY_CLIENT_ID', // Replace with your Spotify app client ID
-  spotifyRedirectUri: 'https://yourdomain.com/callback', // Replace with your production URL
+  spotifyClientId: '__SPOTIFY_CLIENT_ID__', // Will be replaced by GitHub Actions
+  spotifyRedirectUri: '__SPOTIFY_REDIRECT_URI__', // Will be replaced by GitHub Actions
   songPreviewDuration: 20, // Duration in seconds
   songsPerGame: 10, // Number of songs per game session
   autoAdvanceDelay: 1500, // Delay before auto-advancing to next round (in milliseconds). Note that the css animation should be manually changed as well in: code\spotify-music-game\src\app\features\game\game-play\game-play.component.css
