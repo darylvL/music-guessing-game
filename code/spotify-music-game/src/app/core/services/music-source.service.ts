@@ -14,7 +14,8 @@ export class LikedSongsMusicSource implements MusicSource {
 
   fetchTracks(): Promise<Track[]> {
     return new Promise((resolve, reject) => {
-      this.apiService.getUserLikedSongs().subscribe({
+      // Use getUserLikedTracks which fetches ALL liked songs with pagination
+      this.apiService.getUserLikedTracks().subscribe({
         next: (tracks) => resolve(tracks),
         error: (error) => reject(error)
       });

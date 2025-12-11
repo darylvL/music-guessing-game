@@ -31,6 +31,15 @@ export const gameReducer = createReducer(
     gameMode: mode,
     totalRounds,
     gameStatus: 'setup' as const,
+    // Preserve preloaded tracks when initializing game
+    availableTracks: state.availableTracks,
+  })),
+
+  // Preload tracks
+  on(GameActions.preloadTracks, (state) => ({
+    ...state,
+    isLoading: true,
+    error: null,
   })),
 
   // Load tracks

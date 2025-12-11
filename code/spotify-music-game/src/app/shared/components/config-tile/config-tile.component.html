@@ -1,0 +1,59 @@
+<div class="config-tile" [class.expanded]="isExpanded" [class.stepper-mode]="inputType === 'stepper'">
+  <!-- Select Mode -->
+  <div *ngIf="inputType === 'select'" class="tile-header" (click)="onTileClick()">
+    <div class="tile-content">
+      <div class="tile-label">{{ label }}</div>
+      <div class="tile-value">{{ getCurrentLabel() }}</div>
+    </div>
+    <div class="tile-icon" [class.rotated]="isExpanded">
+      <svg width="20" height="20" viewBox="0 0 20 20" fill="currentColor">
+        <path d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z"/>
+      </svg>
+    </div>
+  </div>
+
+  <!-- Stepper Mode -->
+  <div *ngIf="inputType === 'stepper'" class="tile-header stepper-header">
+    <div class="tile-content">
+      <div class="tile-label">{{ label }}</div>
+    </div>
+    <div class="stepper-controls">
+      <button
+        class="stepper-button"
+        (click)="decrement()"
+        [disabled]="!canDecrement()"
+        type="button"
+        aria-label="Decrease">
+        <svg width="16" height="16" viewBox="0 0 16 16" fill="currentColor">
+          <path d="M4 8h8" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+        </svg>
+      </button>
+      <div class="stepper-value">{{ getCurrentLabel() }}</div>
+      <button
+        class="stepper-button"
+        (click)="increment()"
+        [disabled]="!canIncrement()"
+        type="button"
+        aria-label="Increase">
+        <svg width="16" height="16" viewBox="0 0 16 16" fill="currentColor">
+          <path d="M8 4v8M4 8h8" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+        </svg>
+      </button>
+    </div>
+  </div>
+
+  <!-- Options (only for select mode) -->
+  <div class="tile-options" *ngIf="isExpanded && inputType === 'select'">
+    <button
+      *ngFor="let option of options"
+      class="option-button"
+      [class.selected]="option.value === currentValue"
+      (click)="selectOption(option.value)"
+      type="button">
+      <div class="option-label">{{ option.label }}</div>
+      <div class="option-description" *ngIf="option.description">{{ option.description }}</div>
+      <div class="option-check" *ngIf="option.value === currentValue">✓</div>
+    </button>
+  </div>
+</div>
+

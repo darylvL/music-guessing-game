@@ -8,6 +8,12 @@ export const initializeGame = createAction(
   props<{ mode: GameMode; totalRounds: number }>()
 );
 
+// Preload tracks (called when game setup screen loads)
+export const preloadTracks = createAction(
+  '[Game] Preload Tracks',
+  props<{ musicSourceType?: 'liked-songs' | 'playlist' | 'album' }>()
+);
+
 export const loadTracks = createAction('[Game] Load Tracks');
 
 export const loadTracksSuccess = createAction(

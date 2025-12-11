@@ -52,7 +52,7 @@ export class SpotifyAuthService {
       client_id: environment.spotifyClientId,
       response_type: 'code',
       redirect_uri: environment.spotifyRedirectUri,
-      scope: environment.spotifyScopes,
+      scope: environment.spotifyScopes.join(' '),
       code_challenge_method: 'S256',
       code_challenge: codeChallenge,
     });
@@ -92,14 +92,24 @@ export class SpotifyAuthService {
 
       const data = await response.json();
 
+      console.log('[Auth] Token exchange response:', {
+        hasAccessToken: !!data.access_token,
+        tokenType: data.token_type,
+        expiresIn: data.expires_in,
+        scope: data.scope,
+        hasRefreshToken: !!data.refresh_token
+      });
+
       const tokens: AuthTokens = {
         accessToken: data.access_token,
         tokenType: data.token_type,
         expiresIn: data.expires_in,
         expiresAt: Date.now() + data.expires_in * 1000,
         scope: data.scope,
+        refreshToken: data.refresh_token, // Save refresh token for later use
       };
 
+      console.log('[Auth] Saving tokens to localStorage');
       this.saveTokens(tokens);
       localStorage.removeItem(this.CODE_VERIFIER_KEY);
 
@@ -134,19 +144,48 @@ export class SpotifyAuthService {
   }
 
   /**
-   * Get access token if valid
+   * Get access token if valid (synchronous)
    */
   getAccessToken(): string | null {
+    const tokens = this.getTokens();
+
+    if (!tokens) {
+      console.log('[Auth] getAccessToken: No tokens found in storage');
+      return null;
+    }
+
+    // Check if token is expired
+    if (Date.now() >= tokens.expiresAt) {
+      console.log('[Auth] getAccessToken: Token expired');
+      // Don't logout immediately, let the async method handle refresh
+      return null;
+    }
+
+    // console.log('[Auth] getAccessToken: Returning valid token');
+    return tokens.accessToken;
+  }
+
+  /**
+   * Get access token with automatic refresh if expired (async)
+   */
+  async getValidAccessToken(): Promise<string | null> {
     const tokens = this.getTokens();
 
     if (!tokens) {
       return null;
     }
 
-    // Check if token is expired
-    if (Date.now() >= tokens.expiresAt) {
-      this.logout();
-      return null;
+    // Check if token is expired or about to expire (within 5 minutes)
+    const fiveMinutes = 5 * 60 * 1000;
+    if (Date.now() >= tokens.expiresAt - fiveMinutes) {
+      console.log('Token expired or expiring soon, refreshing...');
+      const refreshed = await this.refreshAccessToken();
+      if (!refreshed) {
+        return null;
+      }
+      // Get the new token
+      const newTokens = this.getTokens();
+      return newTokens?.accessToken || null;
     }
 
     return tokens.accessToken;
@@ -157,6 +196,54 @@ export class SpotifyAuthService {
    */
   isAuthenticated(): boolean {
     return this.getAccessToken() !== null;
+  }
+
+  /**
+   * Refresh the access token using the refresh token
+   */
+  async refreshAccessToken(): Promise<boolean> {
+    const tokens = this.getTokens();
+    if (!tokens?.refreshToken) {
+      console.warn('No refresh token available');
+      return false;
+    }
+
+    try {
+      const response = await fetch('https://accounts.spotify.com/api/token', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/x-www-form-urlencoded',
+        },
+        body: new URLSearchParams({
+          grant_type: 'refresh_token',
+          refresh_token: tokens.refreshToken,
+          client_id: environment.spotifyClientId,
+        }),
+      });
+
+      if (!response.ok) {
+        throw new Error('Failed to refresh token');
+      }
+
+      const data = await response.json();
+
+      const newTokens: AuthTokens = {
+        ...tokens,
+        accessToken: data.access_token,
+        expiresIn: data.expires_in,
+        expiresAt: Date.now() + data.expires_in * 1000,
+        // Keep the existing refresh token if a new one isn't provided
+        refreshToken: data.refresh_token || tokens.refreshToken,
+      };
+
+      this.saveTokens(newTokens);
+      console.log('Access token refreshed successfully');
+      return true;
+    } catch (error) {
+      console.error('Error refreshing token:', error);
+      this.logout();
+      return false;
+    }
   }
 
   /**

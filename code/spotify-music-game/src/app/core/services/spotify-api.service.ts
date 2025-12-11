@@ -52,13 +52,13 @@ export class SpotifyApiService {
   }
 
   /**
-   * Get user's liked songs with pagination handling
+   * Get user's liked songs with pagination handling (all pages)
    */
-  getUserLikedSongs(): Observable<Track[]> {
-    return this.getLikedSongsPage(0, 50).pipe(
+  getUserLikedTracks(): Observable<Track[]> {
+    return this.getUserLikedTracksPage(0, 50).pipe(
       expand((response) =>
         response.next
-          ? this.getLikedSongsPage(response.offset + response.limit, 50)
+          ? this.getUserLikedTracksPage(response.offset + response.limit, 50)
           : []
       ),
       reduce((acc: SavedTrack[], response) => [...acc, ...response.items], []),
@@ -69,7 +69,7 @@ export class SpotifyApiService {
   /**
    * Get a single page of liked songs
    */
-  private getLikedSongsPage(offset: number, limit: number): Observable<SpotifyPaginatedResponse<SavedTrack>> {
+  private getUserLikedTracksPage(offset: number, limit: number): Observable<SpotifyPaginatedResponse<SavedTrack>> {
     return this.http.get<SpotifyPaginatedResponse<SavedTrack>>(
       `${this.API_URL}/me/tracks?offset=${offset}&limit=${limit}`,
       { headers: this.getHeaders() }

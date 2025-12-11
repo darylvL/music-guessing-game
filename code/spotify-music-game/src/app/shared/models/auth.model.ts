@@ -4,6 +4,7 @@ export interface AuthTokens {
   expiresIn: number;
   expiresAt: number;
   scope: string;
+  refreshToken?: string; // Optional because not all flows return it
 }
 
 export interface SpotifyUser {

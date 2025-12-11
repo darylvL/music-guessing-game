@@ -56,6 +56,12 @@
   width: 100%;
   height: 100%;
   object-fit: cover;
+  animation: fadeIn 0.5s ease-in;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
 }
 
 .album-art.placeholder {
@@ -66,6 +72,63 @@
   font-size: 4rem;
 }
 
+/* Mystery cover styling */
+.mystery-cover {
+  width: 100%;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  color: white;
+  position: relative;
+  overflow: hidden;
+}
+
+.mystery-cover::before {
+  content: '';
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  background-image:
+    repeating-linear-gradient(
+      45deg,
+      transparent,
+      transparent 10px,
+      rgba(255, 255, 255, 0.05) 10px,
+      rgba(255, 255, 255, 0.05) 20px
+    );
+  animation: slide 20s linear infinite;
+}
+
+@keyframes slide {
+  0% { transform: translate(0, 0); }
+  100% { transform: translate(40px, 40px); }
+}
+
+.mystery-icon {
+  font-size: 4rem;
+  font-weight: bold;
+  z-index: 1;
+  text-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
+  animation: bounce 2s ease-in-out infinite;
+}
+
+@keyframes bounce {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-10px); }
+}
+
+.mystery-text {
+  font-size: 1.2rem;
+  font-weight: 600;
+  margin-top: 0.5rem;
+  z-index: 1;
+  text-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
+  letter-spacing: 1px;
+}
+
 .playback-info {
   text-align: center;
 }
@@ -74,6 +137,47 @@
   font-size: 1.1rem;
   color: #666;
   animation: pulse 2s ease-in-out infinite;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.75rem;
+}
+
+.restart-button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 24px;
+  height: 24px;
+  padding: 0;
+  background: transparent;
+  border: none;
+  border-radius: 50%;
+  cursor: pointer;
+  transition: all 0.2s;
+  color: #888;
+  flex-shrink: 0;
+  animation: none; /* Don't inherit pulse animation */
+}
+
+.restart-button:hover {
+  background: rgba(29, 185, 84, 0.1);
+  color: #1db954;
+  transform: scale(1.15);
+}
+
+.restart-button:active {
+  transform: scale(0.95);
+}
+
+.audio-status {
+  margin-top: 0.5rem;
+}
+
+.audio-status small {
+  font-size: 0.85rem;
+  color: #888;
+  font-style: italic;
 }
 
 @keyframes pulse {
@@ -124,7 +228,8 @@
 
 .choices {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  grid-template-columns: repeat(2, 1fr);
+  grid-template-rows: repeat(2, 1fr);
   gap: 0.75rem;
 }
 
@@ -140,6 +245,9 @@
   min-height: 56px;
   touch-action: manipulation;
   word-wrap: break-word;
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
 }
 
 .choice-button:hover:not(:disabled) {
@@ -251,6 +359,160 @@
 .submit-button:disabled {
   opacity: 0.5;
   cursor: not-allowed;
+}
+
+/* Next button with modern progress overlay */
+.next-button {
+  position: relative;
+  overflow: hidden;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  isolation: isolate;
+}
+
+.next-button .button-text {
+  position: relative;
+  z-index: 2;
+  display: block;
+  transition: transform 0.3s ease;
+}
+
+/* Modern progress overlay - fills the entire button */
+.progress-bar-container {
+  position: absolute;
+  inset: 0;
+  overflow: hidden;
+  border-radius: 2rem;
+  pointer-events: none;
+}
+
+/* Progress bar fill - modern gradient overlay */
+.progress-bar-fill {
+  position: absolute;
+  left: 0;
+  top: 0;
+  height: 100%;
+  width: 0;
+  background: linear-gradient(90deg,
+    rgba(255, 255, 255, 0.15) 0%,
+    rgba(255, 255, 255, 0.25) 50%,
+    rgba(255, 255, 255, 0.15) 100%
+  );
+  backdrop-filter: brightness(1.1);
+  transition: none;
+}
+
+/* Pure CSS animation triggered by class */
+.progress-bar-fill.animating {
+  animation: fillProgress var(--auto-advance-duration, 1500ms) linear forwards;
+}
+
+@keyframes fillProgress {
+  from {
+    width: 0%;
+    opacity: 0;
+  }
+  5% {
+    opacity: 1;
+  }
+  to {
+    width: 100%;
+    opacity: 1;
+  }
+}
+
+/* Modern pulse effect */
+.next-button.auto-advancing {
+  animation: pulse-modern 2s ease-in-out infinite;
+}
+
+.next-button.auto-advancing .button-text {
+  animation: text-glow 2s ease-in-out infinite;
+}
+
+@keyframes pulse-modern {
+  0%, 100% {
+    box-shadow:
+      0 4px 12px rgba(29, 185, 84, 0.4),
+      0 0 0 0 rgba(29, 185, 84, 0.4);
+  }
+  50% {
+    box-shadow:
+      0 6px 20px rgba(29, 185, 84, 0.6),
+      0 0 0 4px rgba(29, 185, 84, 0.2);
+  }
+}
+
+@keyframes text-glow {
+  0%, 100% {
+    text-shadow: 0 0 10px rgba(255, 255, 255, 0.3);
+  }
+  50% {
+    text-shadow: 0 0 20px rgba(255, 255, 255, 0.6);
+  }
+}
+
+/* Keyboard hints */
+.keyboard-hint {
+  font-size: 0.75rem;
+  font-weight: normal;
+  color: #888;
+  margin-left: 0.5rem;
+}
+
+/* Key indicators on choice buttons */
+.key-indicator {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 28px;
+  height: 28px;
+  background: #1db954;
+  color: white;
+  border-radius: 0.375rem;
+  font-size: 0.85rem;
+  font-weight: bold;
+  flex-shrink: 0;
+}
+
+.choice-button:hover:not(:disabled) .key-indicator {
+  background: #1ed760;
+}
+
+.choice-button.selected .key-indicator {
+  background: #28a745;
+}
+
+.choice-button.correct .key-indicator {
+  background: #28a745;
+}
+
+.choice-button.incorrect .key-indicator {
+  background: #dc3545;
+}
+
+.choice-button:disabled .key-indicator {
+  opacity: 0.7;
+}
+
+.choice-text {
+  flex: 1;
+}
+
+/* Loading state for mystery cover */
+.mystery-cover.loading {
+  background: linear-gradient(135deg, #555 0%, #333 100%);
+}
+
+.mystery-cover.loading .spinner {
+  width: 60px;
+  height: 60px;
+  border: 4px solid rgba(255, 255, 255, 0.2);
+  border-top-color: #1db954;
+  border-radius: 50%;
+  animation: spin 1s linear infinite;
+  margin-bottom: 1rem;
 }
 
 .feedback {
