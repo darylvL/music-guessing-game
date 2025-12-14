@@ -34,13 +34,14 @@ export class GamePlayComponent implements OnInit, OnDestroy {
   correctTitle$: Observable<boolean | null>;
   correctArtist$: Observable<boolean | null>;
   isLoading$: Observable<boolean>;
+  isLastRound$: Observable<boolean>;
+  bothAnswersCorrect$: Observable<boolean>;
 
   selectedTitle: string = '';
   selectedArtist: string = '';
   inputTitle: string = '';
   inputArtist: string = '';
   gameMode: GameMode = 'easy';
-  playbackAvailable: boolean = false;
   isAutoAdvancing: boolean = false;
   autoAdvanceDurationCss: string = `${environment.autoAdvanceDelay}ms`;
 
@@ -63,6 +64,8 @@ export class GamePlayComponent implements OnInit, OnDestroy {
     this.correctTitle$ = this.store.select(GameSelectors.selectCorrectTitle);
     this.correctArtist$ = this.store.select(GameSelectors.selectCorrectArtist);
     this.isLoading$ = this.store.select(GameSelectors.selectGameLoading);
+    this.isLastRound$ = this.store.select(GameSelectors.selectIsLastRound);
+    this.bothAnswersCorrect$ = this.store.select(GameSelectors.selectBothAnswersCorrect);
   }
 
   ngOnInit(): void {
@@ -94,13 +97,20 @@ export class GamePlayComponent implements OnInit, OnDestroy {
       })
     );
 
-    // Start auto-advance when answer is submitted
+    // Start auto-advance only when both answers are correct
     this.subscriptions.add(
       this.isAnswered$.subscribe(isAnswered => {
         console.log('[GamePlay] isAnswered changed:', isAnswered, 'isAutoAdvancing:', this.isAutoAdvancing);
         if (isAnswered && !this.isAutoAdvancing) {
-          console.log('[GamePlay] Starting auto-advance');
-          this.startAutoAdvance();
+          // Check if both answers are correct before auto-advancing
+          this.bothAnswersCorrect$.subscribe(bothCorrect => {
+            if (bothCorrect) {
+              console.log('[GamePlay] Both answers correct - starting auto-advance');
+              this.startAutoAdvance();
+            } else {
+              console.log('[GamePlay] At least one answer incorrect - no auto-advance');
+            }
+          }).unsubscribe();
         } else if (!isAnswered && this.isAutoAdvancing) {
           console.log('[GamePlay] Stopping auto-advance');
           this.stopAutoAdvance();

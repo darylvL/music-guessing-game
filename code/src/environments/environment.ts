@@ -11,9 +11,36 @@ export const environment = {
     'user-read-private',
     'user-read-email',
     'user-library-read',
+    'playlist-read-private',
+    'playlist-read-collaborative',
     'streaming',
     'user-read-playback-state',
     'user-modify-playback-state'
-  ]
+  ],
+
+  // Cache Configuration
+  cacheTtlLikedSongs: 15 * 60 * 1000, // 15 minutes in milliseconds - TTL for liked songs cache
+  cacheTtlPlaylists: 15 * 60 * 1000, // 15 minutes in milliseconds - TTL for playlist tracks cache
+  cacheTtlUserPlaylists: 30 * 60 * 1000, // 30 minutes in milliseconds - TTL for user playlists list cache
+  cacheMaxSize: 100 * 1024 * 1024, // 100MB in bytes - Maximum total cache size
+  cacheMaxPlaylists: 100, // Maximum number of cached playlists
+
+  // API Retry Configuration
+  apiRetryMaxAttempts: 3, // Maximum retry attempts for failed API calls
+  apiRetryInitialDelay: 1000, // Initial retry delay in milliseconds (exponential backoff starts here)
+  apiRetryMaxDelay: 10000, // Maximum retry delay in milliseconds (exponential backoff cap)
+
+  // Answer Evaluation Configuration
+  artistSeparators: [
+    ',',
+    'feat',
+    'ft',
+    'ft.',
+    'featuring',
+    'and',
+    '&',
+    '/',
+    '\\'
+  ], // Separators to ignore when comparing artist names
 };
 

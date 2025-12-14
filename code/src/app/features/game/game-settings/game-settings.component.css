@@ -1,7 +1,7 @@
 .settings-container {
   min-height: 100vh;
   display: flex;
-  align-items: center;
+  align-items: flex-start;
   justify-content: center;
   padding: 1rem;
   background: linear-gradient(135deg, #1db954 0%, #191414 100%);
@@ -14,6 +14,7 @@
   max-width: 600px;
   width: 100%;
   box-shadow: 0 10px 40px rgba(0, 0, 0, 0.3);
+  margin: 0 auto;
 }
 
 .header {
@@ -150,9 +151,168 @@
   transform: translateY(0);
 }
 
+/* Music source selection styles */
+.source-type-selection {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+  gap: 1rem;
+  margin-top: 0.5rem;
+}
+
+.source-button {
+  padding: 1.25rem;
+  background: #f5f5f5;
+  border: 3px solid transparent;
+  border-radius: 1rem;
+  cursor: pointer;
+  transition: all 0.3s;
+  text-align: center;
+  min-height: 56px;
+  touch-action: manipulation;
+}
+
+.source-button:hover {
+  background: #e5e5e5;
+  transform: translateY(-2px);
+}
+
+.source-button.selected {
+  background: #e7f5ec;
+  border-color: #1db954;
+}
+
+.source-icon {
+  font-size: 2rem;
+  margin-bottom: 0.5rem;
+}
+
+.source-name {
+  font-size: 0.95rem;
+  font-weight: 600;
+  color: #191414;
+}
+
+/* Playlist selection styles */
+.playlist-selection {
+  margin-top: 1rem;
+}
+
+.loading-playlists {
+  padding: 1rem;
+  text-align: center;
+  color: #666;
+  font-size: 0.9rem;
+  background: #f5f5f5;
+  border-radius: 0.5rem;
+}
+
+.playlist-dropdown {
+  width: 100%;
+  padding: 0.75rem;
+  font-size: 1rem;
+  color: #191414;
+  background: #f5f5f5;
+  border: 2px solid #e5e5e5;
+  border-radius: 0.75rem;
+  cursor: pointer;
+  transition: all 0.2s;
+  min-height: 48px;
+}
+
+.playlist-dropdown:hover {
+  border-color: #1db954;
+  background: #fff;
+}
+
+.playlist-dropdown:focus {
+  outline: none;
+  border-color: #1db954;
+  background: #fff;
+  box-shadow: 0 0 0 3px rgba(29, 185, 84, 0.1);
+}
+
+.playlist-checkboxes {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+  padding: 0.5rem;
+  background: #f5f5f5;
+  border-radius: 0.75rem;
+}
+
+.playlist-checkbox-item {
+  padding: 0.75rem;
+  background: white;
+  border-radius: 0.5rem;
+  transition: all 0.2s;
+}
+
+.playlist-checkbox-item:hover {
+  background: #e7f5ec;
+}
+
+.playlist-checkbox-item label {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  cursor: pointer;
+  font-size: 0.95rem;
+  color: #191414;
+}
+
+.playlist-checkbox-item input[type="checkbox"] {
+  width: 20px;
+  height: 20px;
+  cursor: pointer;
+  accent-color: #1db954;
+}
+
+.playlist-checkbox-item span {
+  flex: 1;
+}
+
+/* Scrollbar styling for container */
+.settings-container::-webkit-scrollbar {
+  width: 8px;
+}
+
+.settings-container::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.settings-container::-webkit-scrollbar-thumb {
+  background: rgba(29, 185, 84, 0.5);
+  border-radius: 4px;
+}
+
+.settings-container::-webkit-scrollbar-thumb:hover {
+  background: rgba(29, 185, 84, 0.8);
+}
+
+/* Current source display */
+.current-source {
+  margin-top: 1rem;
+  padding: 1rem;
+  background: #e7f5ec;
+  border-left: 4px solid #1db954;
+  border-radius: 0.5rem;
+  font-size: 0.9rem;
+  color: #191414;
+}
+
+.current-source strong {
+  color: #1db954;
+}
+
 @media (max-width: 640px) {
+  .settings-container {
+    align-items: flex-start;
+    padding: 0.75rem;
+  }
+
   .settings-card {
     padding: 1.5rem;
+    border-radius: 0.75rem;
   }
 
   .header {
@@ -169,6 +329,18 @@
     height: 40px;
   }
 
+  .content {
+    gap: 1.5rem;
+  }
+
+  .section {
+    gap: 0.75rem;
+  }
+
+  .info-section {
+    padding: 1rem;
+  }
+
   .info-card {
     flex-direction: column;
     gap: 0.5rem;
@@ -176,6 +348,10 @@
 
   .info-icon {
     font-size: 1.5rem;
+  }
+
+  .source-type-selection {
+    grid-template-columns: 1fr;
   }
 }
 

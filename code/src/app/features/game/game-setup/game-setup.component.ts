@@ -11,6 +11,8 @@ import * as AuthActions from '../../../store/auth/auth.actions';
 import * as AuthSelectors from '../../../store/auth/auth.selectors';
 import * as SettingsActions from '../../../store/settings/settings.actions';
 import * as SettingsSelectors from '../../../store/settings/settings.selectors';
+import * as PlaylistSelectors from '../../../store/playlist/playlist.selectors';
+import * as MusicCacheActions from '../../../store/music-cache/music-cache.actions';
 
 @Component({
   selector: 'app-game-setup',
@@ -21,11 +23,13 @@ import * as SettingsSelectors from '../../../store/settings/settings.selectors';
 })
 export class GameSetupComponent implements OnInit {
   selectedMode: GameMode = 'easy';
+
   songsPerGame$: Observable<number>;
   previewDuration$: Observable<number>;
   isLoading$: Observable<boolean>;
   error$: Observable<string | null>;
   currentUser$: Observable<any>;
+  musicSourceDisplay$: Observable<string>;
 
   constructor(
     private store: Store<AppState>,
@@ -36,15 +40,21 @@ export class GameSetupComponent implements OnInit {
     this.currentUser$ = this.store.select(AuthSelectors.selectCurrentUser);
     this.songsPerGame$ = this.store.select(SettingsSelectors.selectSongsPerGame);
     this.previewDuration$ = this.store.select(SettingsSelectors.selectPreviewDuration);
+    this.musicSourceDisplay$ = this.store.select(PlaylistSelectors.selectMusicSourceDisplay);
   }
 
   ngOnInit(): void {
     // Load settings from localStorage via NgRx
     this.store.dispatch(SettingsActions.loadSettings());
 
-    // Preload tracks in the background so they're ready when user starts game
-    // This uses the default music source (liked songs) but can be changed later
-    this.store.dispatch(GameActions.preloadTracks({ musicSourceType: 'liked-songs' }));
+    // Fetch tracks from the selected music source
+    this.store.select(PlaylistSelectors.selectSelectedMusicSource).subscribe(source => {
+      const musicSource = source || { type: 'liked-songs' as const };
+      console.log('[Game Setup] Fetching tracks from selected music source:', musicSource);
+      this.store.dispatch(MusicCacheActions.fetchTracksWithCache({
+        source: musicSource
+      }));
+    }).unsubscribe();
 
     // Initialize game with default mode
     this.updateGameConfig();

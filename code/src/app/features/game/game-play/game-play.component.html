@@ -33,9 +33,6 @@
             </svg>
           </button>
         </div>
-        <div class="audio-status" *ngIf="!playbackAvailable">
-          <small>ℹ️ Audio preview mode (Web Playback unavailable)</small>
-        </div>
       </div>
     </div>
 
@@ -149,21 +146,11 @@
         [class.auto-advancing]="isAutoAdvancing"
         (click)="nextRound()"
         type="button">
-        <span class="button-text">Next Round →</span>
-        <div class="progress-bar-container">
+        <span class="button-text">{{ (isLastRound$ | async) ? 'View Results →' : 'Next Round →' }}</span>
+        <div class="progress-bar-container" *ngIf="isAutoAdvancing">
           <div class="progress-bar-fill" [class.animating]="isAutoAdvancing"></div>
         </div>
       </button>
-    </div>
-
-    <!-- Feedback -->
-    <div class="feedback" *ngIf="isAnswered$ | async">
-      <div class="feedback-item" [class.correct]="correctTitle$ | async" [class.incorrect]="!(correctTitle$ | async)">
-        {{ (correctTitle$ | async) ? '✓' : '✗' }} Title
-      </div>
-      <div class="feedback-item" [class.correct]="correctArtist$ | async" [class.incorrect]="!(correctArtist$ | async)">
-        {{ (correctArtist$ | async) ? '✓' : '✗' }} Artist
-      </div>
     </div>
   </div>
 </div>

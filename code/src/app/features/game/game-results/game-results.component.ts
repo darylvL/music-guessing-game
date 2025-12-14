@@ -25,6 +25,7 @@ export class GameResultsComponent implements OnInit {
   score: number = 0;
   maxScore: number = 0;
   scorePercentage: number = 0;
+  isRoundsExpanded: boolean = false;
 
   constructor(
     private store: Store<AppState>,
@@ -68,6 +69,10 @@ export class GameResultsComponent implements OnInit {
     if (percentage >= 75) return 'excellent';
     if (percentage >= 50) return 'good';
     return 'needs-improvement';
+  }
+
+  toggleRounds(): void {
+    this.isRoundsExpanded = !this.isRoundsExpanded;
   }
 }
 

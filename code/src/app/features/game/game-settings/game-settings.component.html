@@ -40,6 +40,80 @@
       </div>
       </div>
 
+      <div class="section">
+        <h2 class="section-title">Select Music Source</h2>
+        <p class="section-description">Choose where to play songs from</p>
+
+        <div class="source-type-selection">
+          <button
+            class="source-button"
+            [class.selected]="selectedSourceType === 'liked-songs'"
+            (click)="selectSourceType('liked-songs')"
+            type="button">
+            <div class="source-icon">📚</div>
+            <div class="source-name">Your Liked Songs</div>
+          </button>
+
+          <button
+            class="source-button"
+            [class.selected]="selectedSourceType === 'single-playlist'"
+            (click)="selectSourceType('single-playlist')"
+            type="button">
+            <div class="source-icon">🎵</div>
+            <div class="source-name">Single Playlist</div>
+          </button>
+
+          <button
+            class="source-button"
+            [class.selected]="selectedSourceType === 'multiple-playlists'"
+            (click)="selectSourceType('multiple-playlists')"
+            type="button">
+            <div class="source-icon">🎶</div>
+            <div class="source-name">Multiple Playlists</div>
+          </button>
+        </div>
+
+        <div *ngIf="selectedSourceType !== 'liked-songs'" class="playlist-selection">
+          <div *ngIf="isLoadingPlaylists$ | async" class="loading-playlists">
+            Loading playlists...
+          </div>
+
+          <div *ngIf="selectedSourceType === 'single-playlist' && !(isLoadingPlaylists$ | async)">
+            <select
+              class="playlist-dropdown"
+              [(ngModel)]="selectedPlaylistId"
+              (change)="onPlaylistSelected()">
+              <option value="">Select a playlist...</option>
+              <option
+                *ngFor="let playlist of userPlaylists$ | async"
+                [value]="playlist.id">
+                {{ playlist.name }} ({{ playlist.trackCount }} tracks)
+              </option>
+            </select>
+          </div>
+
+          <div *ngIf="selectedSourceType === 'multiple-playlists' && !(isLoadingPlaylists$ | async)"
+               class="playlist-checkboxes">
+            <div
+              *ngFor="let playlist of userPlaylists$ | async"
+              class="playlist-checkbox-item">
+              <label>
+                <input
+                  type="checkbox"
+                  [checked]="selectedPlaylistIds.has(playlist.id)"
+                  [value]="playlist.id"
+                  (change)="onPlaylistCheckboxChange($event, playlist.id)">
+                <span>{{ playlist.name }} ({{ playlist.trackCount }} tracks)</span>
+              </label>
+            </div>
+          </div>
+        </div>
+
+        <div class="current-source" *ngIf="musicSourceDisplay$ | async as sourceDisplay">
+          <strong>Current source:</strong> {{ sourceDisplay }}
+        </div>
+      </div>
+
       <div class="info-section">
       <div class="info-card">
         <div class="info-icon">💡</div>
@@ -49,6 +123,7 @@
             <li>Shorter preview times make the game more challenging</li>
             <li>More songs = longer game sessions</li>
             <li>Changes are saved in your browser immediately</li>
+            <li>Select playlists with preview-enabled tracks for best experience</li>
           </ul>
         </div>
       </div>

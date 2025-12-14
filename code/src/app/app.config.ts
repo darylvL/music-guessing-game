@@ -11,6 +11,8 @@ import { appReducers } from './store/app.state';
 import { AuthEffects } from './store/auth/auth.effects';
 import { GameEffects } from './store/game/game.effects';
 import { SettingsEffects } from './store/settings/settings.effects';
+import { PlaylistEffects } from './store/playlist/playlist.effects';
+import { MusicCacheEffects } from './store/music-cache/music-cache.effects';
 import { SpotifyAuthInterceptor } from './core/interceptors/spotify-auth.interceptor';
 
 export const appConfig: ApplicationConfig = {
@@ -25,7 +27,7 @@ export const appConfig: ApplicationConfig = {
       multi: true
     },
     provideStore(appReducers),
-    provideEffects([AuthEffects, GameEffects, SettingsEffects]),
+    provideEffects([AuthEffects, GameEffects, SettingsEffects, PlaylistEffects, MusicCacheEffects]),
     provideStoreDevtools({
       maxAge: 25,
       logOnly: !isDevMode()

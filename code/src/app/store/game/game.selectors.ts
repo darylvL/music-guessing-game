@@ -99,3 +99,15 @@ export const selectIsAnswered = createSelector(
   (status) => status === 'answered'
 );
 
+export const selectIsLastRound = createSelector(
+  selectCurrentRound,
+  selectTotalRounds,
+  (currentRound, totalRounds) => currentRound >= totalRounds
+);
+
+export const selectBothAnswersCorrect = createSelector(
+  selectCorrectTitle,
+  selectCorrectArtist,
+  (correctTitle, correctArtist) => correctTitle === true && correctArtist === true
+);
+

@@ -136,7 +136,11 @@ export const gameReducer = createReducer(
   })),
 
   // Reset game
-  on(GameActions.resetGame, () => initialGameState),
+  on(GameActions.resetGame, (state) => ({
+    ...initialGameState,
+    // Preserve available tracks when resetting so music source selection is maintained
+    availableTracks: state.availableTracks,
+  })),
 
   // Playback actions (no state change, handled by effects)
   on(GameActions.startPlayback, (state) => state),

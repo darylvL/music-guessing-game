@@ -40,8 +40,15 @@
 
     <!-- Round by round results -->
     <div class="rounds-section">
-      <h2 class="section-title">Round by Round</h2>
-      <div class="rounds-list">
+      <div class="section-header" (click)="toggleRounds()">
+        <h2 class="section-title">Round by Round</h2>
+        <button class="toggle-button" type="button" [attr.aria-label]="isRoundsExpanded ? 'Collapse rounds' : 'Expand rounds'">
+          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" [class.expanded]="isRoundsExpanded">
+            <path d="M6 9l6 6 6-6"/>
+          </svg>
+        </button>
+      </div>
+      <div class="rounds-list" *ngIf="isRoundsExpanded">
         <div
           *ngFor="let result of roundResults$ | async"
           class="round-item">

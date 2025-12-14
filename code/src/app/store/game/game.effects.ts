@@ -8,6 +8,9 @@ import { SpotifyPlaybackService } from '../../core/services/spotify-playback.ser
 import { AppState } from '../app.state';
 import * as GameActions from './game.actions';
 import * as GameSelectors from './game.selectors';
+import * as PlaylistSelectors from '../playlist/playlist.selectors';
+import * as MusicCacheActions from '../music-cache/music-cache.actions';
+import { normalizeTitleForComparison, normalizeArtistForComparison } from '../../shared/utils/answer-normalizer.util';
 
 @Injectable()
 export class GameEffects {
@@ -16,7 +19,9 @@ export class GameEffects {
   private musicSourceService = inject(MusicSourceService);
   private playbackService = inject(SpotifyPlaybackService);
 
-  // Preload tracks when game setup screen loads
+  // Note: Track preloading is now handled by the Music Cache Effects
+  // The cache effects automatically load tracks into the game store when a music source is selected
+  // This effect is kept for backward compatibility but may not be needed
   preloadTracks$ = createEffect(() =>
     this.actions$.pipe(
       ofType(GameActions.preloadTracks),
@@ -40,37 +45,51 @@ export class GameEffects {
     )
   );
 
-  // Load tracks and start first song when game starts
+  // Start game and load first song
+  // Tracks should already be loaded from cache by Music Cache Effects
   startGameAndLoadTracks$ = createEffect(() =>
     this.actions$.pipe(
       ofType(GameActions.startGame),
-      withLatestFrom(this.store.select(GameSelectors.selectAvailableTracks)),
-      switchMap(([_, availableTracks]) => {
+      withLatestFrom(
+        this.store.select(GameSelectors.selectAvailableTracks),
+        this.store.select(PlaylistSelectors.selectSelectedMusicSource)
+      ),
+      switchMap(([_, availableTracks, selectedMusicSource]) => {
         console.log('[Game Effects] startGame - available tracks:', availableTracks.length);
+        console.log('[Game Effects] startGame - selected music source:', selectedMusicSource);
 
-        // If tracks are already loaded, just start the first song
+        // If tracks are already loaded (from cache), just start the first song
         if (availableTracks.length > 0) {
-          console.log('[Game Effects] Using preloaded tracks, dispatching loadNextSong');
+          console.log('[Game Effects] Using cached/preloaded tracks, dispatching loadNextSong');
           return of(GameActions.loadNextSong());
         }
 
-        // Otherwise, load tracks first, then start the song
-        console.log('[Game Effects] No preloaded tracks, loading now...');
-        const musicSource = this.musicSourceService.getDefaultMusicSource();
-        return from(musicSource.fetchTracks()).pipe(
-          switchMap((tracks) => {
-            console.log('[Game Effects] Loaded tracks:', tracks.length);
-            // Dispatch both actions: first load tracks, then load next song
-            return [
-              GameActions.loadTracksSuccess({ tracks }),
-              GameActions.loadNextSong()
-            ];
-          }),
-          catchError((error) => {
-            console.error('[Game Effects] Failed to load tracks:', error);
-            return of(GameActions.loadTracksFailure({ error: error.message }));
-          })
-        );
+        // Fallback: If no tracks are loaded, fetch them from the selected music source
+        console.warn('[Game Effects] No preloaded tracks found! Fetching from selected music source as fallback...');
+
+        // Use the selected music source, or default to liked songs if none selected
+        const source = selectedMusicSource || { type: 'liked-songs' as const };
+
+        // Dispatch fetch action to music cache effects
+        return of(MusicCacheActions.fetchTracksWithCache({ source }));
+      })
+    )
+  );
+
+  // After tracks are loaded during gameplay, start the first song
+  // This handles the case when tracks weren't preloaded and needed to be fetched
+  loadTracksAndStartSong$ = createEffect(() =>
+    this.actions$.pipe(
+      ofType(GameActions.loadTracksSuccess),
+      withLatestFrom(this.store.select(GameSelectors.selectGameStatus)),
+      switchMap(([_, gameStatus]) => {
+        // Only dispatch loadNextSong if the game is in playing status
+        // This means tracks were loaded as a fallback during game start
+        if (gameStatus === 'playing') {
+          console.log('[Game Effects] Tracks loaded during gameplay, dispatching loadNextSong');
+          return of(GameActions.loadNextSong());
+        }
+        return of(); // Return empty to complete the stream
       })
     )
   );
@@ -168,11 +187,14 @@ export class GameEffects {
           });
         }
 
-        // Check answers (case-insensitive, trimmed)
-        const correctTitle = titleAnswer.trim().toLowerCase() ===
-                            currentSong.title.toLowerCase();
-        const correctArtist = artistAnswer.trim().toLowerCase() ===
-                             currentSong.artist.toLowerCase();
+        // Check answers with normalization (ignores brackets, separators, and whitespace differences)
+        const normalizedUserTitle = normalizeTitleForComparison(titleAnswer);
+        const normalizedCorrectTitle = normalizeTitleForComparison(currentSong.title);
+        const correctTitle = normalizedUserTitle === normalizedCorrectTitle;
+
+        const normalizedUserArtist = normalizeArtistForComparison(artistAnswer);
+        const normalizedCorrectArtist = normalizeArtistForComparison(currentSong.artist);
+        const correctArtist = normalizedUserArtist === normalizedCorrectArtist;
 
         console.log('[Game Effects] Answer results:', { correctTitle, correctArtist });
 
