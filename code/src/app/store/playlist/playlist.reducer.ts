@@ -47,6 +47,13 @@ export const playlistReducer = createReducer(
   on(PlaylistActions.resetToDefaultSource, (state) => ({
     ...state,
     selectedMusicSource: { type: 'liked-songs' }
+  })),
+
+  // Load music source from localStorage
+  on(PlaylistActions.loadMusicSourceSuccess, (state, { source }) => ({
+    ...state,
+    selectedMusicSource: source,
+    error: null
   }))
 );
 

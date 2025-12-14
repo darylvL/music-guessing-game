@@ -11,6 +11,7 @@ import * as AuthActions from '../../../store/auth/auth.actions';
 import * as AuthSelectors from '../../../store/auth/auth.selectors';
 import * as SettingsActions from '../../../store/settings/settings.actions';
 import * as SettingsSelectors from '../../../store/settings/settings.selectors';
+import * as PlaylistActions from '../../../store/playlist/playlist.actions';
 import * as PlaylistSelectors from '../../../store/playlist/playlist.selectors';
 import * as MusicCacheActions from '../../../store/music-cache/music-cache.actions';
 
@@ -46,6 +47,9 @@ export class GameSetupComponent implements OnInit {
   ngOnInit(): void {
     // Load settings from localStorage via NgRx
     this.store.dispatch(SettingsActions.loadSettings());
+
+    // Load music source from localStorage via NgRx
+    this.store.dispatch(PlaylistActions.loadMusicSource());
 
     // Fetch tracks from the selected music source
     this.store.select(PlaylistSelectors.selectSelectedMusicSource).subscribe(source => {

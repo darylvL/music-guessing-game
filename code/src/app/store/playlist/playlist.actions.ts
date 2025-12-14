@@ -37,3 +37,19 @@ export const resetToDefaultSource = createAction(
   '[Playlist] Reset To Default Source'
 );
 
+// Load music source from localStorage
+export const loadMusicSource = createAction(
+  '[Playlist] Load Music Source'
+);
+
+export const loadMusicSourceSuccess = createAction(
+  '[Playlist] Load Music Source Success',
+  props<{ source: MusicSourceSelection }>()
+);
+
+// Save music source to localStorage (internal action, dispatched by effects)
+export const saveMusicSourceToStorage = createAction(
+  '[Playlist] Save Music Source To Storage',
+  props<{ source: MusicSourceSelection }>()
+);
+

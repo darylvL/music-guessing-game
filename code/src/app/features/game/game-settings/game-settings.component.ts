@@ -49,6 +49,9 @@ export class GameSettingsComponent implements OnInit {
     // Load settings from localStorage via NgRx
     this.store.dispatch(SettingsActions.loadSettings());
 
+    // Load music source from localStorage via NgRx
+    this.store.dispatch(PlaylistActions.loadMusicSource());
+
     // Load user playlists
     this.store.dispatch(PlaylistActions.loadUserPlaylists());
 
